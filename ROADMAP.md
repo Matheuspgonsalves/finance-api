@@ -15,11 +15,11 @@ Entidade única: `Expense` — `description` (texto), `amount` (número positivo
 - [x] Rodar o servidor e testar no navegador ou Postman/curl
 
 ## Degrau 1 — CRUD em memória (sem banco)
-- [ ] Array em memória (`let expenses = []`)
-- [ ] `POST /expenses`
-- [ ] `GET /expenses`
-- [ ] `GET /expenses/:id`
-- [ ] `PUT /expenses/:id`
+- [x] Array em memória (`let expenses = []`)
+- [x] `POST /expenses`
+- [x] `GET /expenses`
+- [x] `GET /expenses/:id`
+- [x] `PUT /expenses/:id`
 - [ ] `DELETE /expenses/:id`
 - [ ] Testar as 5 rotas manualmente
 

@@ -130,3 +130,17 @@ executado com `node dist/index.js`.
 - `date` do gasto deveria vir do body (data em que a despesa ocorreu), hoje `POST`/`PUT` geram `new Date()`; tratar na validação (Degrau 3).
 - `idCount` começa em `0`, mas o seed ocupa ids 0 a 4 → um novo `POST` duplica id; não respondido ainda. Some quando o banco gerar o id (Degrau 2).
 - `console.log` de debug e imports soltos a limpar; status do `DELETE` (200 vs 204) não discutido.
+
+### 2026-10-04 — Refatoração em camadas (entre Degrau 1 e 2)
+
+**O que foi feito:** o código do `index.ts` foi separado em `routes` (com `Router` e prefixo `/expenses`), `controllers` (HTTP), `repository` (único dono do array e do contador, estado privado) e um util (`findIndexById`). Estado encapsulado no repository, que expõe funções; `import * as` usado para evitar colisão de nomes. A `date` passou a vir do cliente (convertida para `Date` no controller).
+
+**Itens do checklist avançados:**
+- Camadas separadas (controller, service, repository) → **parcial**. Routes, controller e repository feitos; service ainda não (sem regra de negócio) e middleware central de erros pendente (Degrau 4).
+- Por que validar entrada de dados → **parcial**. Concluiu sozinho que `req.body` é `any`, que o TS não protege dados externos, e que `"banana"` em `date` deveria virar `400`; falta implementar com Joi (Degrau 3).
+
+**Pontos fortes:** pediu para estruturar antes de crescer, entendeu a responsabilidade de cada camada, escolheu `null` como retorno do "não achei" no repository e deixou o 404 pro controller, e corrigiu sozinho os bugs que a bateria de testes expôs (`findIndex || -1`, função de delete sem chamada).
+
+**Pontos fracos / a observar:** tende a considerar o trabalho "pronto" sem testar todos os caminhos (precisou da bateria para achar bugs de índice 0 e de função não chamada); `console.log` de debug ficou para trás mesmo depois de "limpeza concluída"; o caminho `/expense` divergia da especificação sem motivo; `id as number` foi um cast para calar o TS.
+
+**Pendências técnicas:** validar `POST`/`PUT` (Degrau 3), converter `date` também no `PUT`, `idCount`/seed resolvidos pelo banco (Degrau 2), `console.log(hasEdited)` ainda no controller.

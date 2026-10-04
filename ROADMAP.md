@@ -20,8 +20,8 @@ Entidade única: `Expense` — `description` (texto), `amount` (número positivo
 - [x] `GET /expenses`
 - [x] `GET /expenses/:id`
 - [x] `PUT /expenses/:id`
-- [ ] `DELETE /expenses/:id`
-- [ ] Testar as 5 rotas manualmente
+- [x] `DELETE /expenses/:id`
+- [x] Testar as 5 rotas manualmente
 
 ## Degrau 2 — Banco de dados de verdade (Prisma + Postgres)
 - [ ] Instalar Prisma

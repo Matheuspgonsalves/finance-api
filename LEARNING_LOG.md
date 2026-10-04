@@ -111,3 +111,22 @@ executado com `node dist/index.js`.
 **Pontos fracos / a observar:** tentou pular a etapa do servidor Express pedindo a "resposta pronta" antes de tentar (recuou quando confrontado, foi ler a doc oficial em vez disso — bom sinal). Teve dificuldade prática com `npx` (não conectou sozinho um conceito já mencionado por ele mesmo antes com a situação atual do erro `tsc não é reconhecido`).
 
 **Pendências técnicas:** nenhuma pendência de instalação — `@types/express` já está no `devDependencies` (correção: eu tinha registrado errado que faltava instalar).
+
+### 2026-10-03 — Degrau 1: CRUD em memória
+
+**O que foi feito:** array `Expense[]` em memória com contador de id, e as 5 rotas (`POST`, `GET` lista, `GET /:id`, `PUT /:id`, `DELETE /:id`) testadas no Postman. Também montou um seed no código para não recriar gastos a cada reinício.
+
+**Itens do checklist avançados:**
+- `req.params` vs `req.body` vs `req.query` → **parcial**. Usa `params` (com cast de string para número, explicado corretamente) e `body` sem ajuda; `query` ainda não apareceu (Degrau 5).
+- Middleware (ordem, `next()`) → **parcial**. Respondeu certo que `express.json()` precisa vir antes das rotas, mas ainda não explorou middleware próprio nem `next()`.
+- Status codes → **parcial**. Não sabia o 201 de cabeça, aplicou depois de explicado; 200 vs 404 para coleção vazia vs recurso inexistente ele raciocinou sozinho e certo.
+- Servidor HTTP/rota, `req`/`res` → praticado, mas ainda não explicado com palavras próprias; não marcado.
+
+**Pontos fortes:** debugou bem quando guiado (`req.body` undefined → middleware; `findIndex` com `0` falsy). Ao raciocinar sobre persistência e 200 vs 404, explicou bem com as próprias palavras. Testa de verdade no Postman e traz evidência.
+
+**Pontos fracos / a observar:** (1) confunde nomes de métodos parecidos (`slice` vs `splice`) e atribuiu a falha ao "array mockado" em vez de ler o código/resposta — vale estimular ler o que o código realmente faz antes de formular hipótese. (2) imports automáticos acidentais (`stream/consumers`, `node:console`) repetidos duas vezes. (3) frustração com perguntas abstratas funciona melhor com instrução direta para sintaxe/fatos e perguntas socráticas só para decisões de design.
+
+**Pendências técnicas:**
+- `date` do gasto deveria vir do body (data em que a despesa ocorreu), hoje `POST`/`PUT` geram `new Date()`; tratar na validação (Degrau 3).
+- `idCount` começa em `0`, mas o seed ocupa ids 0 a 4 → um novo `POST` duplica id; não respondido ainda. Some quando o banco gerar o id (Degrau 2).
+- `console.log` de debug e imports soltos a limpar; status do `DELETE` (200 vs 204) não discutido.

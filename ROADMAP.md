@@ -27,8 +27,8 @@ Entidade única: `Expense` — `description` (texto), `amount` (número positivo
 - [x] Instalar Prisma
 - [x] Schema com tabela `Expense { id, description, amount, date, createdAt }`
 - [x] Primeira migration
-- [ ] Trocar o array pelas chamadas do Prisma, rota por rota
-- [ ] Confirmar que os dados persistem após reiniciar o servidor
+- [x] Trocar o array pelas chamadas do Prisma, rota por rota
+- [x] Confirmar que os dados persistem após reiniciar o servidor
 
 ## Degrau 3 — Validação com Joi
 - [ ] Instalar Joi

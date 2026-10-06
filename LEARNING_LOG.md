@@ -17,30 +17,30 @@ Painel de controle do meu progresso, mantido por Claude. Duas partes:
 ### Fundamentos do projeto atual (Node/TS/Express)
 - [x] `npm init`, `package.json`, dependências vs devDependencies
 - [x] `tsconfig.json` (o que configura, por que existe)
-- [ ] Scripts npm (`dev`, `build`, `start`)
-- [ ] O que é um servidor HTTP, o que é uma rota
-- [ ] `req` e `res`: o que cada um representa
+- [x] Scripts npm (`dev`, `build`, `start`)
+- [x] O que é um servidor HTTP, o que é uma rota
+- [x] `req` e `res`: o que cada um representa
 - [ ] `req.params` vs `req.body` vs `req.query`
-- [ ] Status codes HTTP (quando usar 200, 201, 400, 404, 500)
+- [x] Status codes HTTP (quando usar 200, 201, 400, 404, 500)
 - [ ] Middleware: o que é, ordem de execução, `next()`
 
 ### Banco de dados
-- [ ] O que é um ORM e por que usar um
+- [x] O que é um ORM e por que usar um
 - [ ] Prisma: schema, migration, client
 - [ ] Diferença entre migration e apenas alterar o schema
-- [ ] Tipos de dado (number/decimal para dinheiro, date) e por que isso importa
+- [x] Tipos de dado (number/decimal para dinheiro, date) e por que isso importa
 - [ ] ⭐ Migrations do Prisma em vez de `db push`, e seed de dados
 - [ ] Índices nas consultas mais usadas (e por que ajudam)
 - [ ] Transações quando há mais de uma escrita
 - [ ] Evitar N+1 em consultas com relações
 
 ### Validação
-- [ ] Por que validar entrada de dados (o que pode dar errado sem isso)
+- [x] Por que validar entrada de dados (o que pode dar errado sem isso)
 - [ ] Joi: schemas, `.required()`, `.positive()`, mensagens de erro
 - [ ] Variáveis de ambiente validadas na inicialização (Zod ou Joi)
 
 ### Tratamento de erros
-- [ ] Por que centralizar tratamento de erro em vez de `try/catch` espalhado
+- [x] Por que centralizar tratamento de erro em vez de `try/catch` espalhado (conceito; implementação no Degrau 4)
 - [ ] Assinatura de 4 parâmetros do middleware de erro no Express
 
 ### Qualidade e testes
@@ -144,3 +144,21 @@ executado com `node dist/index.js`.
 **Pontos fracos / a observar:** tende a considerar o trabalho "pronto" sem testar todos os caminhos (precisou da bateria para achar bugs de índice 0 e de função não chamada); `console.log` de debug ficou para trás mesmo depois de "limpeza concluída"; o caminho `/expense` divergia da especificação sem motivo; `id as number` foi um cast para calar o TS.
 
 **Pendências técnicas:** validar `POST`/`PUT` (Degrau 3), converter `date` também no `PUT`, `idCount`/seed resolvidos pelo banco (Degrau 2), `console.log(hasEdited)` ainda no controller.
+
+### 2026-10-06 — Degrau 2: Prisma + PostgreSQL
+
+**O que foi feito:** Postgres local, database `finance_api`, `DATABASE_URL` no `.env` (ignorado pelo git), Prisma 7.10.0 (após descartar um `init` que instalou o RC 8 e reescreveu o `tsconfig`), model `Expense`, migration `init`, client em `src/lib/prisma.ts` com adapter `pg`, repository e controllers migrados para `async/await`, scripts `dev`/`build`/`start` com `tsx`. Persistência confirmada após reiniciar o servidor.
+
+**Itens do checklist avançados:**
+- Scripts npm → **marcado**. Percebeu o incômodo de build + run, aplicou `tsx watch` e separou `dev`/`build`/`start`.
+- Tipos de dado para dinheiro → **marcado**. Explicou com as próprias palavras que `Decimal` evita erros de aproximação do `Float`, principalmente em comparações num sistema financeiro. Escolheu `VarChar(200)` com raciocínio de proteção contra abuso.
+- Prisma (schema, migration, client) → **parcial**. Escreveu o model e rodou a migration, com sintaxe fornecida por mim; ainda não explicou migration vs apenas alterar o schema.
+- Migrations em vez de `db push`, seed → **parcial**. Usou `migrate dev`; seed ainda não.
+- Por que validar entrada → **parcial** (vem do Degrau 1/refator; falta implementar com Joi).
+- Nenhum segredo commitado → **parcial**. `.env` ignorado, mas a senha foi colada no chat e falta um `.env.example`.
+
+**Pontos fortes:** descartou sozinho as mudanças do `init` problemático, corrigiu o `include` do `tsconfig`, escolheu manter `amount` como texto no JSON com a justificativa certa, diagnosticou o `await` ausente no `delete`.
+
+**Pontos fracos / a observar:** a mesma classe de bug (função chamada sem parênteses/`await`) apareceu duas vezes; aceita bem instrução direta e rejeita perguntas sobre sintaxe que não dá pra deduzir; colou senha no chat mesmo depois do aviso.
+
+**Pendências técnicas:** validação com Joi (`date` inválida, limite de 200 caracteres), `Decimal(12,2)`, `.env.example`, `PUT` devolve o dado enviado em vez do registro salvo, vulnerabilidades da CLI do Prisma a reavaliar antes de deploy.

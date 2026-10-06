@@ -24,9 +24,9 @@ Entidade única: `Expense` — `description` (texto), `amount` (número positivo
 - [x] Testar as 5 rotas manualmente
 
 ## Degrau 2 — Banco de dados de verdade (Prisma + Postgres)
-- [ ] Instalar Prisma
-- [ ] Schema com tabela `Expense { id, description, amount, date, createdAt }`
-- [ ] Primeira migration
+- [x] Instalar Prisma
+- [x] Schema com tabela `Expense { id, description, amount, date, createdAt }`
+- [x] Primeira migration
 - [ ] Trocar o array pelas chamadas do Prisma, rota por rota
 - [ ] Confirmar que os dados persistem após reiniciar o servidor
 

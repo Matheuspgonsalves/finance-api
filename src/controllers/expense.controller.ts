@@ -12,7 +12,7 @@ export async function createExpense(req: Request, res: Response) {
     date: validDate
   };
 
-  const newExpense = expenseRepository.addExpense(expenseData);
+  const newExpense = await expenseRepository.addExpense(expenseData);
 
   return res
     .status(201)
@@ -24,7 +24,7 @@ export async function createExpense(req: Request, res: Response) {
 }
 
 export async function getAllExpenses(req: Request, res: Response) {
-  const expenseList = expenseRepository.listExpenses();
+  const expenseList = await expenseRepository.listExpenses();
 
   return res
   .status(200)
@@ -36,7 +36,7 @@ export async function getAllExpenses(req: Request, res: Response) {
 
 export async function getExpenseById(req: Request, res: Response) {
   const id = req.params.id;
-  const foundExpense = expenseRepository.findById(Number(id));
+  const foundExpense = await expenseRepository.findExpenseById(Number(id));
 
   if(foundExpense === null) return res.status(404).json({message: "Expense not found"});
 
@@ -48,7 +48,7 @@ export async function getExpenseById(req: Request, res: Response) {
   });
 }
 
-export async function editExpenseById(req: Request, res: Response) {
+export async function updateExpenseById(req: Request, res: Response) {
   const id = Number(req.params.id);
   const { amount, description, date } = req.body;
 
@@ -59,7 +59,7 @@ export async function editExpenseById(req: Request, res: Response) {
     date
   }
 
-  const hasEdited = expenseRepository.editExpenseById(data);
+  const hasEdited = await expenseRepository.updateExpenseById(id, data);
 
   if(hasEdited === false) return res.status(404).json({message: "Expense not found"});
 
@@ -74,7 +74,7 @@ export async function editExpenseById(req: Request, res: Response) {
 export async function deleteExpenseById(req: Request, res: Response) {
   const id = Number(req.params.id);
 
-  const hasDeleted = expenseRepository.deleteExpenseById(id); 
+  const hasDeleted = await expenseRepository.deleteExpenseById(id); 
 
   if(!hasDeleted) return res.status(404).json({message: "Expense not found"});
 

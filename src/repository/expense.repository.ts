@@ -1,58 +1,40 @@
+import { prisma } from "../lib/prisma";
 import { Expense } from "../types/expenses";
-import { findIndexById } from "./utils/expense.utils";
 
-let expenses: Expense[] = [];
-let idCount = 0;
+export async function addExpense(expense: Omit<Expense, "id">) {
 
-export function addExpense(expense: Omit<Expense, "id">): Expense {
-
-  const { description, amount, date } = expense;
-
-  const newExpense: Expense = {
-    id: idCount,
-    amount,
-    description,
-    date
-  }
-
-  expenses.push(newExpense);
-  idCount++;
+  const newExpense = await prisma.expense.create({
+    data: {amount: expense.amount, description: expense.description, date: expense.date},
+  });
 
   return newExpense;
 }
 
-export function listExpenses(): Expense[] {
-  return expenses;
+export async function listExpenses() {
+  return await prisma.expense.findMany();
 }
 
-export function findById(id: number): Expense | null {
-  return expenses.find(obj => obj.id === Number(id)) || null;
+export async function findExpenseById(id: number) {
+  return await prisma.expense.findUnique({where: {id}});
 }
 
-export function editExpenseById(data: Expense): boolean {
-  const { id, amount, description, date } = data;
-  const foundIndex = findIndexById(id, expenses);
+export async function updateExpenseById(id: number, data: Omit<Expense, "id">): Promise<boolean> {
+  const expense = await prisma.expense.findUnique({where: {id}});
+  if(expense === null) return false;
 
-  if(foundIndex === -1) return false;
-
-  const newExpense = {
-    id,
-    amount,
-    description,
-    date
-  }
-
-  expenses[foundIndex] = newExpense;
+  await prisma.expense.update({
+    where: {id},
+    data: {amount: data.amount, description: data.description, date: data.date},
+  });
 
   return true;
 }
 
-export function deleteExpenseById(id: number): boolean {
-  const foundIndex = findIndexById(id, expenses);
+export async function deleteExpenseById(id: number): Promise<boolean> {
+  const expense = await prisma.expense.findUnique({where: {id}});
+  if(expense === null) return false;
 
-  if(foundIndex === -1) return false;
- 
-  expenses.splice(foundIndex, 1);
 
+  await prisma.expense.delete({where: {id}});
   return true;
 }

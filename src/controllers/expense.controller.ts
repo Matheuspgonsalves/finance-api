@@ -5,11 +5,10 @@ import { Expense } from "../types/expenses";
 export async function createExpense(req: Request, res: Response) {
   const { description, amount, date } = req.body;
 
-  const validDate: Date = new Date(date);
   const expenseData: Omit<Expense, "id"> = {
     amount,
     description,
-    date: validDate
+    date
   };
 
   const newExpense = await expenseRepository.addExpense(expenseData);

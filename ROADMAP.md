@@ -1,4 +1,4 @@
-# Roadmap — API de Registro de Gastos
+# Roadmap — API de Registro de Gasto
 
 Checklist de tarefas do projeto (o "o quê"). O checklist de habilidades e o
 acompanhamento de progresso (o "o que eu sei de verdade") ficam no

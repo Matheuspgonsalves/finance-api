@@ -58,15 +58,15 @@ export async function updateExpenseById(req: Request, res: Response) {
     date
   }
 
-  const hasEdited = await expenseRepository.updateExpenseById(id, data);
+  const editedExpense = await expenseRepository.updateExpenseById(id, data);
 
-  if(hasEdited === false) return res.status(404).json({message: "Expense not found"});
+  if(editedExpense === null) return res.status(404).json({message: "Expense not found"});
 
   return res
   .status(200)
   .json({
     message: "OK",
-    details: data
+    details: editedExpense
   });
 }
 

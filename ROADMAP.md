@@ -31,10 +31,10 @@ Entidade única: `Expense` — `description` (texto), `amount` (número positivo
 - [x] Confirmar que os dados persistem após reiniciar o servidor
 
 ## Degrau 3 — Validação com Joi
-- [ ] Instalar Joi
-- [ ] Schema de validação (`description` obrigatório, `amount` obrigatório e positivo, `date` obrigatória e válida)
-- [ ] Aplicar no `POST` e no `PUT`
-- [ ] Testar dados inválidos e confirmar erro 400
+- [x] Instalar Joi
+- [x] Schema de validação (`description` obrigatório, `amount` obrigatório e positivo, `date` obrigatória e válida)
+- [x] Aplicar no `POST` e no `PUT`
+- [x] Testar dados inválidos e confirmar erro 400
 
 ## Degrau 4 — Tratamento de erros
 - [ ] Classe de erro customizada (`AppError`)

@@ -18,16 +18,14 @@ export async function findExpenseById(id: number) {
   return await prisma.expense.findUnique({where: {id}});
 }
 
-export async function updateExpenseById(id: number, data: Omit<Expense, "id">): Promise<boolean> {
+export async function updateExpenseById(id: number, data: Omit<Expense, "id">) {
   const expense = await prisma.expense.findUnique({where: {id}});
-  if(expense === null) return false;
+  if(expense === null) return null;
 
-  await prisma.expense.update({
+  return await prisma.expense.update({
     where: {id},
     data: {amount: data.amount, description: data.description, date: data.date},
   });
-
-  return true;
 }
 
 export async function deleteExpenseById(id: number): Promise<boolean> {

@@ -36,7 +36,7 @@ Painel de controle do meu progresso, mantido por Claude. Duas partes:
 
 ### Validação
 - [x] Por que validar entrada de dados (o que pode dar errado sem isso)
-- [ ] Joi: schemas, `.required()`, `.positive()`, mensagens de erro
+- [x] Joi: schemas, `.required()`, `.positive()`, mensagens de erro
 - [ ] Variáveis de ambiente validadas na inicialização (Zod ou Joi)
 
 ### Tratamento de erros
@@ -162,3 +162,19 @@ executado com `node dist/index.js`.
 **Pontos fracos / a observar:** a mesma classe de bug (função chamada sem parênteses/`await`) apareceu duas vezes; aceita bem instrução direta e rejeita perguntas sobre sintaxe que não dá pra deduzir; colou senha no chat mesmo depois do aviso.
 
 **Pendências técnicas:** validação com Joi (`date` inválida, limite de 200 caracteres), `Decimal(12,2)`, `.env.example`, `PUT` devolve o dado enviado em vez do registro salvo, vulnerabilidades da CLI do Prisma a reavaliar antes de deploy.
+
+### 2026-10-11 — Degrau 3: Validação com Joi
+
+**O que foi feito:** `expenseSchema` (description obrigatório até 200, amount positivo, date ISO) com mensagens próprias via `.messages({...})`; middleware `validateBody(schema)` (fábrica, `abortEarly: false`, `next()`) aplicado só no `POST` e `PUT`; remoção da conversão redundante de `date` no controller; correção do `PUT` para devolver o registro salvo. Testes manuais (válido, dois erros, data inválida, 200+ caracteres, PUT, GET/DELETE, DELETE de id inexistente) passaram.
+
+**Itens do checklist avançados:**
+- Joi (schemas, `.required()`, `.positive()`, mensagens) → **marcado**. Escreveu o schema e aplicou; os textos das mensagens foram gerados por mim a pedido.
+- Por que validar entrada → já marcado (explicou bem com a analogia da boate).
+- Middleware (ordem, `next()`) → **parcial**. Aplicou na rota e entendeu por que o alcance é por rota e não global; a pergunta "por que antes do controller" ficou sem resposta verbalizada.
+- Validação de env vars (Zod/Joi) → não iniciado.
+
+**Pontos fortes:** pensou sozinho em mensagens customizadas e questionou onde aplicar o middleware (chegou à ideia de aplicar no router, que foi testada na lógica); diagnosticou corretamente por que o `PUT` devolvia o dado enviado; usa prefixos de commit coerentes (`refactor:`, `fix:`).
+
+**Pontos fracos / a observar:** pulou os testes antes do commit (decisão consciente, comunicada); bug de ponto no lugar de `;` em `req.body = value.` passou pelo `tsc` porque `value` é `any`; pedidos repetidos de instrução mais direta.
+
+**Pendências técnicas:** formato de resposta ainda inconsistente entre rotas (`description` só no POST), ordem do `findMany` sem `orderBy`, mensagens de validação e `PUT` com campos parciais (hoje exige os três).

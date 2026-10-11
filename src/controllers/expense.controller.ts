@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as expenseRepository from "../repository/expense.repository";
 import { Expense } from "../types/expenses";
+import { AppError, NotFoundError } from "../errors/AppError";
 
 export async function createExpense(req: Request, res: Response) {
   const { description, amount, date } = req.body;
@@ -37,7 +38,7 @@ export async function getExpenseById(req: Request, res: Response) {
   const id = req.params.id;
   const foundExpense = await expenseRepository.findExpenseById(Number(id));
 
-  if(foundExpense === null) return res.status(404).json({message: "Expense not found"});
+  if(foundExpense === null) throw new NotFoundError("Expense");
 
   return res
   .status(200)
@@ -60,7 +61,7 @@ export async function updateExpenseById(req: Request, res: Response) {
 
   const editedExpense = await expenseRepository.updateExpenseById(id, data);
 
-  if(editedExpense === null) return res.status(404).json({message: "Expense not found"});
+  if(editedExpense === null) throw new NotFoundError("Expense");
 
   return res
   .status(200)
@@ -75,7 +76,7 @@ export async function deleteExpenseById(req: Request, res: Response) {
 
   const hasDeleted = await expenseRepository.deleteExpenseById(id); 
 
-  if(!hasDeleted) return res.status(404).json({message: "Expense not found"});
+  if(!hasDeleted) throw new NotFoundError("Expense");
 
   return res
   .status(200)

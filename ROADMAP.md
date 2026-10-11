@@ -37,10 +37,10 @@ Entidade única: `Expense` — `description` (texto), `amount` (número positivo
 - [x] Testar dados inválidos e confirmar erro 400
 
 ## Degrau 4 — Tratamento de erros
-- [ ] Classe de erro customizada (`AppError`)
-- [ ] Middleware central de erro
-- [ ] Trocar retornos de erro manuais pelas novas classes/middleware
-- [ ] Testar cenários de erro (não encontrado, validação, etc.)
+- [x] Classe de erro customizada (`AppError`)
+- [x] Middleware central de erro
+- [x] Trocar retornos de erro manuais pelas novas classes/middleware
+- [x] Testar cenários de erro (não encontrado, validação, etc.)
 
 ## Degrau 5 — Extra opcional
 - [ ] `GET /expenses/total` (soma dos `amount`)

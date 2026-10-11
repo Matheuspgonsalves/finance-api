@@ -22,7 +22,7 @@ Painel de controle do meu progresso, mantido por Claude. Duas partes:
 - [x] `req` e `res`: o que cada um representa
 - [ ] `req.params` vs `req.body` vs `req.query`
 - [x] Status codes HTTP (quando usar 200, 201, 400, 404, 500)
-- [ ] Middleware: o que é, ordem de execução, `next()`
+- [x] Middleware: o que é, ordem de execução, `next()`
 
 ### Banco de dados
 - [x] O que é um ORM e por que usar um
@@ -178,3 +178,24 @@ executado com `node dist/index.js`.
 **Pontos fracos / a observar:** pulou os testes antes do commit (decisão consciente, comunicada); bug de ponto no lugar de `;` em `req.body = value.` passou pelo `tsc` porque `value` é `any`; pedidos repetidos de instrução mais direta.
 
 **Pendências técnicas:** formato de resposta ainda inconsistente entre rotas (`description` só no POST), ordem do `findMany` sem `orderBy`, mensagens de validação e `PUT` com campos parciais (hoje exige os três).
+
+### 2026-10-11 — Degrau 4: Tratamento de erros
+
+**O que foi feito:** classe `AppError extends Error` (message + statusCode) e subclasses `ValidationError` (400, `details`) e `NotFoundError`; `errorHandler` central com 4 parâmetros, registrado por último no `index.ts`, tratando `ValidationError`, `AppError` e erro inesperado (500 genérico + `console.error`); controllers passaram a lançar `throw new AppError("Expense not found", 404)`; `validateBody` passou a lançar `ValidationError`. Testados: 404 (GET/PUT/DELETE de id inexistente), 400 com vários erros, e 500 simulando banco inacessível (erro completo só no terminal, cliente recebe mensagem genérica).
+
+**Itens do checklist avançados:**
+- Centralizar tratamento de erro → já marcado (conceito); agora implementado.
+- Assinatura de 4 parâmetros do middleware de erro → **parcial**. Escreveu corretamente, mas ainda não explicou com palavras próprias por que o Express precisa dos 4 parâmetros.
+- Middleware (ordem, `next()`) → **parcial**. Aprendeu que o `errorHandler` fica por último, mas a pergunta "por que o middleware vem antes do controller" segue sem resposta verbalizada.
+
+**Pontos fortes:** propôs sozinho criar `ValidationError` por extensão (princípio Open/Closed), em vez de alterar o `AppError`, e ainda criou `NotFoundError` por conta própria; aplicou a ordem correta das checagens (mais específico primeiro).
+
+**Pontos fracos / a observar:** tentou colocar o `errorHandler` dentro de cada rota (confundiu middleware de erro com passo da fila); só testou erros de validação um por vez, não combinados; `NotFoundError` ainda não é usado (os controllers usam `AppError` direto).
+
+**Pendências técnicas:** `NotFoundError` com mensagem fixa genérica (usar ou remover), formato de resposta de sucesso inconsistente entre rotas, `PUT` ainda exige os três campos.
+
+**Complemento (mesma sessão):** além do previsto, o usuário (1) propôs um `AppError` padrão (500) para absorver erros desconhecidos e o `errorHandler` passou a convertê-los em `AppError` padrão em vez de `res.status(500)` fixo; (2) criou o middleware `jsonErrorTranslator` (JSON malformado → `AppError` 400) depois que um teste mostrou o erro caindo em 500; (3) descobriu por teste que `super(message = "...")` sobrescrevia todas as mensagens. Testes finais: 404, 400 com `details`, JSON quebrado, e 500 em JSON com banco inacessível (verificado em servidor temporário), todos corretos.
+
+**Pontos fracos adicionais:** `next()` solto no fim do `errorHandler` deixaria erros desconhecidos sem resposta; atribuição dentro de `super()` confundida com valor padrão de parâmetro; segue sem verbalizar "por que 4 parâmetros".
+
+**Pendências técnicas adicionais:** tradução de erros do Prisma (ex.: `P2002` → 409) fica para quando houver caso real; `AppError` com status 5xx não deveria expor `message` ao cliente; `toResponse()` por classe se os erros crescerem.
